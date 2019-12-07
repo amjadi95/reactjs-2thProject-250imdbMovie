@@ -21,12 +21,13 @@ class PageConroller extends Component {
 
     return (
       <div className="page-control fx fxdr fjcc w-100">
+        <label htmlFor="backPage">previous</label>
         <button
           className={meta.current_page != 1 && "badge badge-info fx-cc"}
           disabled={meta.current_page == 1 && true}
           onClick={() => this.props.onNextPage(-1)}
+          id="backPage"
         >
-          {" "}
           {"<"}{" "}
         </button>
         <select
@@ -43,10 +44,12 @@ class PageConroller extends Component {
           }
           disabled={meta.current_page == meta.page_count && true}
           onClick={() => this.props.onNextPage(1)}
+          id="nextPage"
         >
           {" "}
           {">"}{" "}
         </button>
+        <label htmlFor="nextPage">next</label>
       </div>
     );
   }

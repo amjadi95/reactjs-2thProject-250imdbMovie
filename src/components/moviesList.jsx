@@ -11,7 +11,6 @@ class MoviesList extends Component {
   render() {
     var movies = this.props.data;
     if (this.props) {
-      console.log(this.props);
       movies = this.props.data;
     } else {
       return <div></div>;
