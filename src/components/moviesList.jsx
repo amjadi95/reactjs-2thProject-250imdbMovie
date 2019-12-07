@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { throwStatement, directive } from "@babel/types";
-import Post from "./post";
+import PostItem from "./postItem";
 
 class MoviesList extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class MoviesList extends Component {
     return (
       <div className="movies-list fx fjcc fxww fww fxdr w-100">
         {movies.map(obj => (
-          <Post data={obj} />
+          <PostItem key={obj.id} data={obj} />
         ))}
       </div>
     );

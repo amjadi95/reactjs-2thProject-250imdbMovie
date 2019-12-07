@@ -233,6 +233,7 @@ body {
   color: #f8ebe0;
   padding: 0 8px;
   border-radius: 5px;
+  cursor: pointer;
 }
 .navbar-logo a {
   font-size: 18px;

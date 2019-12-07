@@ -15,7 +15,7 @@ class PageConroller extends Component {
     if (meta.page_count) {
       if (meta.page_count > 1)
         for (let index = 0; index < meta.page_count; index++) {
-          pagesNumber.push(<option>{index + 1}</option>);
+          pagesNumber.push(<option key={index + 1}>{index + 1}</option>);
         }
     }
 

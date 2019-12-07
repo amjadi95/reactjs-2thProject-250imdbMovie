@@ -14,7 +14,10 @@ class NavBar extends Component {
               className="navbar-items-container fx 
              faic fjcsb"
             >
-              <div className="navbar-logo fx-cc">
+              <div
+                className="navbar-logo fx-cc"
+                onClick={this.props.onClickHomePage}
+              >
                 <span>IMDb Top 250</span>
               </div>
               <SearchBox onSearch={this.props.onSearch}></SearchBox>

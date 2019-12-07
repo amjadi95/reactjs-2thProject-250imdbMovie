@@ -3,6 +3,7 @@ import MoviesList from "./moviesList";
 import { spawn } from "child_process";
 import PageContoller from "./pageController";
 import NavBar from "./navBar";
+import Post from "./post";
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -10,8 +11,6 @@ class Home extends Component {
       pageList: [],
       metaData: { current_page: 0, per_page: 0, page_count: 0, total_count: 0 },
       searchString: "",
-      genreSelected: "",
-      listOfGenres: [],
       movieFullInfo: null
     };
   }
@@ -76,7 +75,8 @@ class Home extends Component {
           var meta = this.convertMetaToInt(data.metadata);
           this.setState({
             pageList: data.data,
-            metaData: meta
+            metaData: meta,
+            searchString: ""
           });
         });
     }
@@ -98,7 +98,8 @@ class Home extends Component {
           var meta = this.convertMetaToInt(data.metadata);
           this.setState({
             pageList: data.data,
-            metaData: meta
+            metaData: meta,
+            searchString: ""
           });
         });
     }
@@ -123,33 +124,30 @@ class Home extends Component {
         });
     }
   };
-  onSelectGenre = genreID => {
-    var listOfMoviesofGenre = [];
-    for (var index = 1; index <= 25; index++) {
-      let list = fetch(
-        "http://moviesapi.ir/api/v1/genres/" + genreID + "/movies?page=" + index
-      )
-        .then(result => {
-          return result.json();
-        })
-        .then(data => {
-          return data.data;
+  homePage = () => {
+    fetch("http://moviesapi.ir/api/v1/movies?page=1")
+      .then(result => {
+        return result.json();
+      })
+      .then(data => {
+        var movies = data.data;
+        var meta = this.convertMetaToInt(data.metadata);
+
+        this.setState({
+          pageList: movies,
+          metaData: meta,
+          searchString: ""
         });
-      listOfMoviesofGenre.push(list);
-    }
-    var newPageList = [];
-    for (var i = 0; i < listOfMoviesofGenre.length; i++) {
-      for (var j = 0; j < listOfMoviesofGenre[i].length; j++) {
-        newPageList.push(listOfMoviesofGenre[i][j]);
-      }
-    }
-    var newMeta = {
-      current_page: 1,
-      per_page: 10,
-      page_count: newPageList / 10,
-      total_count: newPageList
-    };
-    this.setState({ pageList: newPageList, metaData: newMeta });
+      });
+  };
+  onSelectPost = id => {
+    fetch("http://moviesapi.ir/api/v1/movies/" + id)
+      .then(result => {
+        return result.json();
+      })
+      .then(data => {
+        this.setState({ movieFullInfo: data });
+      });
   };
   render() {
     let movies = this.state.pageList;
@@ -160,10 +158,11 @@ class Home extends Component {
         <NavBar
           genresList={this.state.listOfGenres}
           onSelectGenre={this.onSelectGenre}
+          onClickHomePage={this.homePage}
           onSearch={this.onSearch}
         ></NavBar>
 
-        <div>
+        <div className="main">
           {this.state.searchString != "" && (
             <div className="result-message">
               <h5>
