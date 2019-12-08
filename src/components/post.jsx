@@ -110,14 +110,16 @@ class Post extends Component {
               </div>
             </div>
             <div className=" movie-images fx fxdc faic">
-              {movie.images.map(obj => (
-                <div>
-                  <span className="badge badge-light border border-warning">
-                    screenShots:
-                  </span>
-                  <img src={obj} alt="" width="100%" />
-                </div>
-              ))}
+              {movie.images
+                ? movie.images.map(obj => (
+                    <div>
+                      <span className="badge badge-light border border-warning">
+                        screenShots:
+                      </span>
+                      <img src={obj} alt="" width="100%" />
+                    </div>
+                  ))
+                : ""}
             </div>
           </div>
         </div>

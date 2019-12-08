@@ -12,7 +12,8 @@ class Home extends Component {
       metaData: { current_page: 0, per_page: 0, page_count: 0, total_count: 0 },
       searchString: "",
       movieFullInfo: null,
-      showFullPage: false
+      showFullPage: false,
+      loading: false
     };
   }
 
@@ -40,7 +41,7 @@ class Home extends Component {
       { id: 20, name: "Musical" },
       { id: 21, name: "Sport" }
     ];
-    this.setState({ listOfGenres: genresList });
+    this.setState({ listOfGenres: genresList, loading: true });
     fetch("http://moviesapi.ir/api/v1/movies?page=1")
       .then(result => {
         return result.json();
@@ -51,7 +52,8 @@ class Home extends Component {
 
         this.setState({
           pageList: movies,
-          metaData: meta
+          metaData: meta,
+          loading: false
         });
       });
   }
@@ -66,21 +68,26 @@ class Home extends Component {
 
   onSelectPage = event => {
     var page = event.target.value;
+
     var meta = this.state.metaData;
-    if (page <= meta.page_count && page >= 1) {
-      fetch("http://moviesapi.ir/api/v1/movies?page=" + page)
-        .then(result => {
-          return result.json();
-        })
-        .then(data => {
-          var meta = this.convertMetaToInt(data.metadata);
-          this.setState({
-            pageList: data.data,
-            metaData: meta,
-            searchString: ""
+    if (page != meta.current_page)
+      if (page <= meta.page_count && page >= 1) {
+        this.setState({ loading: true });
+        fetch("http://moviesapi.ir/api/v1/movies?page=" + page)
+          .then(result => {
+            return result.json();
+          })
+          .then(data => {
+            var meta = this.convertMetaToInt(data.metadata);
+            this.setState({
+              pageList: data.data,
+              metaData: meta,
+              searchString: "",
+              showFullPage: false,
+              loading: false
+            });
           });
-        });
-    }
+      }
   };
   onNextPage = next => {
     var meta = this.state.metaData;
@@ -89,6 +96,7 @@ class Home extends Component {
       meta.current_page + next <= meta.page_count ||
       meta.current_page + next >= 1
     ) {
+      this.setState({ loading: true });
       fetch(
         "http://moviesapi.ir/api/v1/movies?page=" + (meta.current_page + next)
       )
@@ -97,35 +105,50 @@ class Home extends Component {
         })
         .then(data => {
           var meta = this.convertMetaToInt(data.metadata);
-          this.setState({
-            pageList: data.data,
-            metaData: meta,
-            searchString: ""
-          });
+          this.setState(
+            {
+              pageList: data.data,
+              metaData: meta,
+              searchString: ""
+            },
+            () => {
+              this.setState({ loading: false });
+            }
+          );
         });
     }
   };
   onSearch = str => {
-    if (str != "") {
-      fetch("http://moviesapi.ir/api/v1/movies?q=" + str)
-        .then(result => {
-          return result.json();
-        })
-        .then(data => {
-          var meta = this.convertMetaToInt(data.metadata);
-          if (meta.total_count > 0) {
-            this.setState({
-              pageList: data.data,
-              metaData: meta,
-              searchString: str
-            });
-          } else {
-            alert("search: no movie");
-          }
-        });
-    }
+    if (this.state.searchString != str)
+      if (str != "") {
+        this.setState({ loading: true });
+        fetch("http://moviesapi.ir/api/v1/movies?q=" + str)
+          .then(result => {
+            return result.json();
+          })
+          .then(data => {
+            var meta = this.convertMetaToInt(data.metadata);
+            if (meta.total_count > 0) {
+              this.setState(
+                {
+                  pageList: data.data,
+                  metaData: meta,
+                  searchString: str,
+                  showFullPage: false
+                },
+                () => {
+                  this.setState({ loading: false });
+                }
+              );
+            } else {
+              alert("search: no movie");
+            }
+          });
+      }
   };
   homePage = () => {
+    if (this.state.metaData.total_count != 250)
+      this.setState({ loading: true });
     fetch("http://moviesapi.ir/api/v1/movies?page=1")
       .then(result => {
         return result.json();
@@ -137,17 +160,25 @@ class Home extends Component {
         this.setState({
           pageList: movies,
           metaData: meta,
-          searchString: ""
+          searchString: "",
+          showFullPage: false,
+          loading: false
         });
       });
   };
   onSelectPost = id => {
+    this.setState({ loading: true });
     fetch("http://moviesapi.ir/api/v1/movies/" + id)
       .then(result => {
         return result.json();
       })
       .then(data => {
-        this.setState({ movieFullInfo: data, showFullPage: true });
+        this.setState({
+          movieFullInfo: data,
+          showFullPage: true,
+          loading: false,
+          searchString: ""
+        });
       });
   };
   render() {
@@ -164,6 +195,12 @@ class Home extends Component {
         ></NavBar>
 
         <div className="main">
+          {this.state.loading && (
+            <div className="loading fx fx fxdc faic">
+              <span>Loading</span>
+              <div className="loader"></div>
+            </div>
+          )}
           {this.state.searchString != "" && (
             <div className="result-message">
               <h5>
