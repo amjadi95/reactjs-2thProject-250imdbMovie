@@ -44,7 +44,9 @@ class Home extends Component {
     this.setState({ listOfGenres: genresList, loading: true });
     fetch("http://moviesapi.ir/api/v1/movies?page=1")
       .then(result => {
-        return result.json();
+        if (result.status >= 200 && result.status <= 299) {
+          return result.json();
+        }
       })
       .then(data => {
         var movies = data.data;
@@ -55,6 +57,13 @@ class Home extends Component {
           metaData: meta,
           loading: false
         });
+      })
+      .catch(function(error) {
+        alert("request failed");
+        console.log(
+          "There has been a problem with your fetch operation: ",
+          error.message
+        );
       });
   }
   convertMetaToInt = meta => {
@@ -75,7 +84,9 @@ class Home extends Component {
         this.setState({ loading: true });
         fetch("http://moviesapi.ir/api/v1/movies?page=" + page)
           .then(result => {
-            return result.json();
+            if (result.status >= 200 && result.status <= 299) {
+              return result.json();
+            }
           })
           .then(data => {
             var meta = this.convertMetaToInt(data.metadata);
@@ -86,6 +97,13 @@ class Home extends Component {
               showFullPage: false,
               loading: false
             });
+          })
+          .catch(function(error) {
+            alert("request failed");
+            console.log(
+              "There has been a problem with your fetch operation: ",
+              error.message
+            );
           });
       }
   };
@@ -101,7 +119,9 @@ class Home extends Component {
         "http://moviesapi.ir/api/v1/movies?page=" + (meta.current_page + next)
       )
         .then(result => {
-          return result.json();
+          if (result.status >= 200 && result.status <= 299) {
+            return result.json();
+          }
         })
         .then(data => {
           var meta = this.convertMetaToInt(data.metadata);
@@ -115,6 +135,13 @@ class Home extends Component {
               this.setState({ loading: false });
             }
           );
+        })
+        .catch(function(error) {
+          alert("request failed");
+          console.log(
+            "There has been a problem with your fetch operation: ",
+            error.message
+          );
         });
     }
   };
@@ -124,7 +151,9 @@ class Home extends Component {
         this.setState({ loading: true });
         fetch("http://moviesapi.ir/api/v1/movies?q=" + str)
           .then(result => {
-            return result.json();
+            if (result.status >= 200 && result.status <= 299) {
+              return result.json();
+            }
           })
           .then(data => {
             var meta = this.convertMetaToInt(data.metadata);
@@ -143,6 +172,13 @@ class Home extends Component {
             } else {
               alert("search: no movie");
             }
+          })
+          .catch(function(error) {
+            alert("request failed");
+            console.log(
+              "There has been a problem with your fetch operation: ",
+              error.message
+            );
           });
       }
   };
@@ -151,34 +187,60 @@ class Home extends Component {
       this.setState({ loading: true });
     fetch("http://moviesapi.ir/api/v1/movies?page=1")
       .then(result => {
-        return result.json();
+        if (result.status >= 200 && result.status <= 299) {
+          return result.json();
+        }
       })
       .then(data => {
         var movies = data.data;
         var meta = this.convertMetaToInt(data.metadata);
 
-        this.setState({
-          pageList: movies,
-          metaData: meta,
-          searchString: "",
-          showFullPage: false,
-          loading: false
-        });
+        this.setState(
+          {
+            pageList: movies,
+            metaData: meta,
+            searchString: "",
+            showFullPage: false
+          },
+          () => {
+            this.setState({ loading: false });
+          }
+        );
+      })
+      .catch(function(error) {
+        alert("request failed");
+        console.log(
+          "There has been a problem with your fetch operation: ",
+          error.message
+        );
       });
   };
   onSelectPost = id => {
     this.setState({ loading: true });
     fetch("http://moviesapi.ir/api/v1/movies/" + id)
       .then(result => {
-        return result.json();
+        if (result.status >= 200 && result.status <= 299) {
+          return result.json();
+        }
       })
       .then(data => {
-        this.setState({
-          movieFullInfo: data,
-          showFullPage: true,
-          loading: false,
-          searchString: ""
-        });
+        this.setState(
+          {
+            movieFullInfo: data,
+            showFullPage: true,
+            searchString: ""
+          },
+          () => {
+            this.setState({ loading: false });
+          }
+        );
+      })
+      .catch(function(error) {
+        alert("request failed");
+        console.log(
+          "There has been a problem with your fetch operation: ",
+          error.message
+        );
       });
   };
   render() {
