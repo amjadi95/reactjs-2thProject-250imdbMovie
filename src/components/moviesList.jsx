@@ -18,7 +18,11 @@ class MoviesList extends Component {
     return (
       <div className="movies-list fx fjcc fxww fww fxdr w-100">
         {movies.map(obj => (
-          <PostItem key={obj.id} data={obj} />
+          <PostItem
+            key={obj.id}
+            data={obj}
+            onSelectPost={this.props.onSelectPost}
+          />
         ))}
       </div>
     );

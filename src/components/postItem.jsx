@@ -14,7 +14,10 @@ class PostItem extends Component {
       return;
     }
     return (
-      <div className="post fx fxdr ">
+      <div
+        className="post fx fxdr "
+        onClick={() => this.props.onSelectPost(movie.id)}
+      >
         <span className="badge badge-secondary post-id">{movie.id}</span>
         <div className="movie-summary-image fx-cc">
           <img src={movie.poster} alt="" width="100%" height="100%" />

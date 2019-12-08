@@ -11,7 +11,8 @@ class Home extends Component {
       pageList: [],
       metaData: { current_page: 0, per_page: 0, page_count: 0, total_count: 0 },
       searchString: "",
-      movieFullInfo: null
+      movieFullInfo: null,
+      showFullPage: false
     };
   }
 
@@ -146,7 +147,7 @@ class Home extends Component {
         return result.json();
       })
       .then(data => {
-        this.setState({ movieFullInfo: data });
+        this.setState({ movieFullInfo: data, showFullPage: true });
       });
   };
   render() {
@@ -172,13 +173,21 @@ class Home extends Component {
               </h5>
             </div>
           )}
-
-          <MoviesList data={movies}></MoviesList>
-          <PageContoller
-            onSelectPage={this.onSelectPage}
-            onNextPage={this.onNextPage}
-            metaData={this.state.metaData}
-          ></PageContoller>
+          {this.state.showFullPage ? (
+            <Post data={this.state.movieFullInfo}></Post>
+          ) : (
+            <React.Fragment>
+              <MoviesList
+                data={movies}
+                onSelectPost={this.onSelectPost}
+              ></MoviesList>
+              <PageContoller
+                onSelectPage={this.onSelectPage}
+                onNextPage={this.onNextPage}
+                metaData={this.state.metaData}
+              ></PageContoller>
+            </React.Fragment>
+          )}
         </div>
       </React.Fragment>
     );
